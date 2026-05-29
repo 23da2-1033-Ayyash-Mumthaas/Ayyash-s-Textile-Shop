@@ -1,26 +1,37 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:textile_mobile_app/services/dummy_data.dart';
 
-class HeroCarousel extends StatefulWidget {
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:textile_mobile_app/app/firebase_providers.dart';
+
+class HeroCarousel extends ConsumerStatefulWidget {
   const HeroCarousel({super.key, required this.onShopNow});
 
   final VoidCallback onShopNow;
 
   @override
-  State<HeroCarousel> createState() => _HeroCarouselState();
+  ConsumerState<HeroCarousel> createState() => _HeroCarouselState();
 }
 
-class _HeroCarouselState extends State<HeroCarousel> {
+class _HeroCarouselState extends ConsumerState<HeroCarousel> {
   final PageController _controller = PageController(viewportFraction: 0.96);
   int _index = 0;
   Timer? _timer;
 
   @override
-  void initState() {
-    super.initState();
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _startTimer(int count) {
+    _timer?.cancel();
+    if (count <= 1) return;
     _timer = Timer.periodic(const Duration(seconds: 4), (_) {
-      final next = (_index + 1) % DummyData.heroBanners.length;
+      if (!mounted || count == 0) return;
+      final next = (_index + 1) % count;
       _controller.animateToPage(
         next,
         duration: const Duration(milliseconds: 700),
@@ -30,19 +41,32 @@ class _HeroCarouselState extends State<HeroCarousel> {
   }
 
   @override
-  void dispose() {
-    _timer?.cancel();
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final bannersAsync = ref.watch(bannersStreamProvider);
+    final banners = bannersAsync.valueOrNull ?? [];
+    final active = banners.where((b) => b.isActive).toList();
+
+    if (active.isEmpty) {
+      _timer?.cancel();
+      _timer = null;
+      return const SizedBox(height: 230);
+    }
+
+    final imageUrls = active.map((b) => b.imageUrl).toList();
+    final titles = active.map((b) => b.title).toList();
+    final subtitles = active.map((b) => b.subtitle).toList();
+
+    if (_timer == null) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _startTimer(imageUrls.length),
+      );
+    }
+
     return SizedBox(
       height: 230,
       child: PageView.builder(
         controller: _controller,
-        itemCount: DummyData.heroBanners.length,
+        itemCount: imageUrls.length,
         onPageChanged: (value) => setState(() => _index = value),
         itemBuilder: (context, index) {
           final isActive = index == _index;
@@ -56,47 +80,57 @@ class _HeroCarouselState extends State<HeroCarousel> {
                 margin: const EdgeInsets.symmetric(horizontal: 6),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
-                  image: DecorationImage(
-                    image: NetworkImage(DummyData.heroBanners[index]),
-                    fit: BoxFit.cover,
-                  ),
                 ),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.7),
-                        Colors.transparent,
-                      ],
+                clipBehavior: Clip.antiAlias,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: imageUrls[index],
+                      fit: BoxFit.cover,
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      const Text(
-                        'Style Redefined',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w700,
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black.withValues(alpha: 0.7),
+                            Colors.transparent,
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Discover the Latest Trends',
-                        style: TextStyle(color: Colors.white70),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            titles[index].isNotEmpty
+                                ? titles[index]
+                                : 'Style Redefined',
+                            style: const TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            subtitles[index].isNotEmpty
+                                ? subtitles[index]
+                                : 'Discover the Latest Trends',
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: widget.onShopNow,
+                            child: const Text('Shop Now'),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: widget.onShopNow,
-                        child: const Text('Shop Now'),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

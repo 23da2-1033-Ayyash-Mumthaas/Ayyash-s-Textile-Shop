@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:textile_mobile_app/views/customer_support_page.dart';
-import 'package:textile_mobile_app/views/settings_page.dart';
+import 'package:textile_mobile_app/screens/customer_support_page.dart';
+import 'package:textile_mobile_app/screens/settings_page.dart';
 
 class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
   const GlobalAppBar({super.key, required this.onGoHome, this.title});

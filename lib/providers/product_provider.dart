@@ -1,13 +1,25 @@
 import 'package:flutter/foundation.dart';
+import 'package:textile_mobile_app/data/mappers/product_mapper.dart';
+import 'package:textile_mobile_app/data/models/product_model.dart';
 import 'package:textile_mobile_app/models/product.dart';
-import 'package:textile_mobile_app/services/dummy_data.dart';
 
 class ProductProvider extends ChangeNotifier {
   String _searchQuery = '';
   String _selectedCategory = 'All';
+  final ProductMapper _mapper = const ProductMapper();
 
-  List<Product> get allProducts => DummyData.products;
-  List<String> get categories => ['All', ...DummyData.categoryIcons.keys];
+  List<Product> _products = [];
+
+  void setFromFirestore(List<ProductModel> models) {
+    _products = models.map(_mapper.toLegacy).toList();
+    notifyListeners();
+  }
+
+  List<Product> get allProducts => _products;
+  List<String> get categories {
+    final names = _products.map((p) => p.category).toSet().toList()..sort();
+    return ['All', ...names];
+  }
 
   String get selectedCategory => _selectedCategory;
   String get searchQuery => _searchQuery;

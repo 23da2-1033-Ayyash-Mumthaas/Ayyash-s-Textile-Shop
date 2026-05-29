@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "812197369200",
+    "project_id": "ayyash-textile-shop",
+    "storage_bucket": "ayyash-textile-shop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812197369200:android:0b3273c0ad3aacc9fc6bb5",
+        "android_client_info": {
+          "package_name": "com.ayyash.textiles.ayyash_textile_shop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812197369200-1p1musmmjnclrqlb436pjq210a5r00bh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhe_28N05RIDywm7xQBo33LcykzlCdLio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812197369200-1p1musmmjnclrqlb436pjq210a5r00bh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "812197369200-vcj3cf2faqc2cohiu6kmrjhi1mql1eq2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.textileMobileApp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812197369200:android:60d120df3cdd352efc6bb5",
+        "android_client_info": {
+          "package_name": "com.example.textile_mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812197369200-1p1musmmjnclrqlb436pjq210a5r00bh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhe_28N05RIDywm7xQBo33LcykzlCdLio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812197369200-1p1musmmjnclrqlb436pjq210a5r00bh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "812197369200-vcj3cf2faqc2cohiu6kmrjhi1mql1eq2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.textileMobileApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
